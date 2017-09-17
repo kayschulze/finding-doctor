@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="build/css/vendor.css">
+    <script src="build/js/vendor.min.js"></script>
+    <script type="text/javascript" src="build/js/app.js"></script>
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <title>Find Your Doctor</title>
+  </head>
+  <body>
+    <div class="container">
+
+      <div class="opening-screen">
+        <h1>Find Your Doctor</h1>
+        <p>This website utilizes the API by BetterDoctor:</p>
+        <form id="searchBetterDoctorForm">
+
+          <label for="medicalConditionInput">Medical Condition</label>
+          <input type="text" name="medicalConditionInput" id="medicalConditionInput">
+
+          <label for="specialtyInput">Specialty</label>
+          <input type="text" name="specialtyInput" id="specialtyInput">
+
+          <label for="searchLimitInput">Search Limit</label>
+          <input type="text" name="searchLimitInput" id="searchLimitInput">
+
+          <label for="doctorNameInput">Doctor's Name</label>
+          <input type="text" name="doctorNameInput" id="doctorNameInput">
+
+          <button type="submit" id="Search">Search Doctors</button>
+        </form>
+
+        <div class="output"></div>
+
+          <div id="errors"></div>
+
+        </div>
+      </div>
+  </body>
+</html>
