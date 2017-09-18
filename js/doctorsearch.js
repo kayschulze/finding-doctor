@@ -19,9 +19,20 @@ export class DoctorSearch {
     return filledPhrase;
   }
 
+  // formatPhoneType(phonetype) {
+  //   let typeArray = phonetype.split("_");
+  //   typeArray.forEach(function(word) {
+  //     word[0].toUpperCase();
+  //   });
+  //
+  //   return typeArray.join(" ");
+  // }
+
   searchMedicalIssue(medicalCondition, specialty, searchLimit, doctorName) {
     medicalCondition = this.fillSpace(medicalCondition);
-    
+    specialty = this.fillSpace(searchLimit);
+    doctorName = this.fillSpace(doctorName);
+
     let promise = new Promise(function(resolve, reject) {
 
       let request = new XMLHttpRequest();
@@ -44,11 +55,11 @@ export class DoctorSearch {
     promise.then(function(response) {
       let doctorResponse = JSON.parse(response);
       let dataArray = doctorResponse.data;
+
       dataArray.forEach(function(data) {
         let practicesArray = data.practices;
         practicesArray.forEach(function(practice) {
           let profileArray = data.profile;
-          console.log(profileArray);
 
           $('.output').append(`<ul><li>Name: Dr. ${profileArray.first_name} ${profileArray.last_name}</li>`);
 
@@ -56,7 +67,23 @@ export class DoctorSearch {
           let practiceAddress = practice.visit_address;
           $('.output').append(`<li>Practice Name: ${practice.name}</li>`);
           $('.output').append(`<li>Practice Location:</li><li> ${practiceAddress.street}</li>`);
-          $('.output').append(`<li>${practiceAddress.city}, ${practiceAddress.state} ${practiceAddress.zip}</li><br></ul>`);
+          $('.output').append(`<li>${practiceAddress.city}, ${practiceAddress.state} ${practiceAddress.zip}</li>`);
+
+          let practicePhones = practice.phones;
+          practicePhones.forEach(function(phone) {
+            //let phoneType = this.formatPhoneType(phone.type);
+            $('.output').append(`<li>${phone.type}: ${phone.number}</li>`);
+          });
+
+          $('.output').append(`<li>Email: ${practice.email}</li>`);
+          $('.output').append(`<li>Website: ${practice.website}</li>`);
+
+          if (practice.accepts_new_patients == true) {
+            $('.output').append(`<li>Accepts New Patients</li><br></ul>`);
+          }
+          else {
+            $('.output').append(`<li>Does Not Accept New Patients</li><br></ul>`);
+          }
         });
       });
     }, function(error) {

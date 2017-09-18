@@ -18,7 +18,6 @@ $(function() {
 
     let newDoctorSearch = new DoctorSearch(newMedicalCondition, newSpecialty, newSearchLimit, newDoctorName);
 
-
     newDoctorSearch.searchMedicalIssue(newMedicalCondition, newSpecialty, newSearchLimit, newDoctorName);
 
   });
