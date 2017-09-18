@@ -71,6 +71,14 @@ export class DoctorSearch {
 
           $('.output').append(`<ul><li>Name: Dr. ${profileArray.first_name} ${profileArray.last_name}</li>`);
 
+          let dataSpecialty = data.specialties;
+          dataSpecialty.forEach(function(specialty) {
+            console.log(specialty.name);
+            $('.output').append(`<li>Specialty:  ${specialty.name}</li>`);
+            $('.output').append(`<li>Description:  ${specialty.description}</li>`);
+            $('.output').append(`<li>Category:  ${specialty.category}</li>`);
+          });
+
           // Display elements of location Visit Address
           let practiceAddress = practice.visit_address;
           $('.output').append(`<li>Practice Name: ${practice.name}</li>`);

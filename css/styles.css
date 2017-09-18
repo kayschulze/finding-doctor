@@ -1,3 +1,9 @@
+body {
+  background-image: url("http://www.vectorfree.com/media/vectors/medical-symbol.jpg");
+  background-size: cover;
+  font-family: 'Palanquin Dark', sans-serif;
+}
+
 ul {
   margin: 0;
   padding: 0;
