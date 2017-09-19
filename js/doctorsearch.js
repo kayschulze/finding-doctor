@@ -45,18 +45,18 @@ export class DoctorSearch {
       let doctorNameField = '';
 
       if (medicalCondition.length > 0) {
-        medicalConditionField = 'query=' + medicalCondition;
+        medicalConditionField += '&query=' + medicalCondition;
       }
 
-      if (specialtyField.length > 0) {
-        specialtyField = '&specialty=' + specialty;
+      if (specialty.length > 0) {
+        specialtyField += '&specialty=' + specialty;
       }
 
-      if (doctorNameField.length > 0) {
-        doctorNameField = '&Name=' + doctorName;
+      if (doctorName.length > 0) {
+        doctorNameField = 'name=' + doctorName;
       }
 
-      let url = `https://api.betterdoctor.com/2016-03-01/doctors?${medicalConditionField}&location=wa-seattle&sort=distance-asc&skip=0&limit=${searchLimit}${specialtyField}${doctorNameField}&user_key=${apiKey}`;
+      let url = `https://api.betterdoctor.com/2016-03-01/doctors?${doctorNameField}${medicalConditionField}${specialtyField}&location=wa-seattle&skip=0&limit=${searchLimit}&user_key=${apiKey}`;
 
       request.onload = function() {
         if (this.status === 200) {
