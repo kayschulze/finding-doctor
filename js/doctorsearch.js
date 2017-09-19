@@ -40,7 +40,23 @@ export class DoctorSearch {
 
       let request = new XMLHttpRequest();
 
-      let url = `https://api.betterdoctor.com/2016-03-01/doctors?query=${medicalCondition}&location=wa-seattle&sort=distance-asc&skip=0&limit=${searchLimit}&specialty=${specialty}&Name=${doctorName}&user_key=${apiKey}`;
+      let medicalConditionField = '';
+      let specialtyField = '';
+      let doctorNameField = '';
+
+      if (medicalCondition.length > 0) {
+        medicalConditionField = 'query=' + medicalCondition;
+      }
+
+      if (specialtyField.length > 0) {
+        specialtyField = '&specialty=' + specialty;
+      }
+
+      if (doctorNameField.length > 0) {
+        doctorNameField = '&Name=' + doctorName;
+      }
+
+      let url = `https://api.betterdoctor.com/2016-03-01/doctors?${medicalConditionField}&location=wa-seattle&sort=distance-asc&skip=0&limit=${searchLimit}${specialtyField}${doctorNameField}&user_key=${apiKey}`;
 
       request.onload = function() {
         if (this.status === 200) {
@@ -66,22 +82,20 @@ export class DoctorSearch {
       dataArray.forEach(function(data) {
         let practicesArray = data.practices;
 
+        let profileArray = data.profile;
+        $('.output').append(`<div class='row'><h2>Name: Dr. ${profileArray.first_name} ${profileArray.last_name}</h2></div>`);
+
+        let dataSpecialty = data.specialties;
+        dataSpecialty.forEach(function(specialty) {
+          $('.output').append(`<div class='row'><div class='practiceColumn'><ul><li>Specialty:  ${specialty.name}</li>`);
+          $('.output').append(`<li>Description:  ${specialty.description}</li>`);
+          $('.output').append(`<li>Category:  ${specialty.category}</li></ul></div></div><br>`);
+        });
+
         practicesArray.forEach(function(practice) {
-          let profileArray = data.profile;
-
-          $('.output').append(`<ul><li>Name: Dr. ${profileArray.first_name} ${profileArray.last_name}</li>`);
-
-          let dataSpecialty = data.specialties;
-          dataSpecialty.forEach(function(specialty) {
-            console.log(specialty.name);
-            $('.output').append(`<li>Specialty:  ${specialty.name}</li>`);
-            $('.output').append(`<li>Description:  ${specialty.description}</li>`);
-            $('.output').append(`<li>Category:  ${specialty.category}</li>`);
-          });
-
           // Display elements of location Visit Address
           let practiceAddress = practice.visit_address;
-          $('.output').append(`<li>Practice Name: ${practice.name}</li>`);
+          $('.output').append(`<div class='row'><div class='practiceColumn'><ul><li>Practice Name: ${practice.name}</li>`);
           $('.output').append(`<li>Practice Location:</li><li> ${practiceAddress.street}</li>`);
           $('.output').append(`<li>${practiceAddress.city}, ${practiceAddress.state} ${practiceAddress.zip}</li>`);
 
@@ -106,95 +120,14 @@ export class DoctorSearch {
           }
 
           if (practice.accepts_new_patients == true) {
-            $('.output').append(`<li>Accepts New Patients</li><br></ul>`);
+            $('.output').append(`<li>Accepts New Patients</li><br></ul></div>`);
           }
           else {
-            $('.output').append(`<li>Does Not Accept New Patients</li><br></ul>`);
+            $('.output').append(`<li>Does Not Accept New Patients</li><br></ul></div>`);
           }
+          // $('.output').append(`</div>`);
         });
-      });
-    }, function(error) {
-      $('.showErrors').text(`There was an error: ${error.message}`);
-    });
-  }
-
-  searchSpecialty(medicalCondition, specialty, searchLimit, doctorName) {
-    medicalCondition = this.fillSpace(medicalCondition);
-    specialty = this.fillSpace(searchLimit);
-    doctorName = this.fillSpace(doctorName);
-
-    let promiseSpecialty = new Promise(function(resolve, reject) {
-
-      let request = new XMLHttpRequest();
-
-      let url = `https://api.betterdoctor.com/2016-03-01/doctors?query=${medicalCondition}&location=wa-seattle&sort=distance-asc&skip=0&limit=${searchLimit}&specialty=${specialty}&Name=${doctorName}&user_key=${apiKey}`;
-
-      request.onload = function() {
-        if (this.status === 200) {
-          resolve(request.response);
-        }
-        else {
-          reject(Error(request.statusText));
-        }
-      };
-      request.open("GET", url, true);
-      request.send();
-
-    });
-
-    promiseSpecialty.then(function(response) {
-      let doctorResponse = JSON.parse(response);
-      let dataArray = doctorResponse.data;
-
-      dataArray.forEach(function(data) {
-        let practicesArray = data.practices;
-
-        if (practicesArray.length < 1) {
-          $('.output').append(`<ul><li>No Doctors Found.</li></ul>`);
-        }
-
-        practicesArray.forEach(function(practice) {
-          let practiceSpecialties = practice.specialties;
-          if (specialty == practiceSpecialties.uid || specialty == practiceSpecialties.name || specialty == practiceSpecialties.category || specialty == practiceSpecialties.actor || specialty == practiceSpecialties.actors) {
-            let profileArray = data.profile;
-
-            $('.output').append(`<ul><li>Name: Dr. ${profileArray.first_name} ${profileArray.last_name}</li>`);
-
-            // Display elements of location Visit Address
-            let practiceAddress = practice.visit_address;
-            $('.output').append(`<li>Practice Name: ${practice.name}</li>`);
-            $('.output').append(`<li>Practice Location:</li><li> ${practiceAddress.street}</li>`);
-            $('.output').append(`<li>${practiceAddress.city}, ${practiceAddress.state} ${practiceAddress.zip}</li>`);
-
-            let practicePhones = practice.phones;
-            practicePhones.forEach(function(phone) {
-              //let phoneType = this.formatPhoneType(phone.type);
-              $('.output').append(`<li>${phone.type}: ${phone.number}</li>`);
-            });
-
-            if (practice.email != null) {
-              $('.output').append(`<li>Email: ${practice.email}</li>`);
-            }
-            else {
-              $('.output').append(`<li>No Email Available</li>`);
-            }
-
-            let thisWebsite = practice.website;
-            if (thisWebsite == 'undefined') {
-              $('.output').append(`<li>No Website Available</li>`);
-            }
-            else {
-              $('.output').append(`<li>Website: ${thisWebsite}</li>`);
-            }
-
-            if (practice.accepts_new_patients == true) {
-              $('.output').append(`<li>Accepts New Patients</li><br></ul>`);
-            }
-            else {
-              $('.output').append(`<li>Does Not Accept New Patients</li><br></ul>`);
-            }
-          }
-        });
+        $('.output').append(`</div>`);
       });
     }, function(error) {
       $('.showErrors').text(`There was an error: ${error.message}`);
